@@ -1,0 +1,13 @@
+name            = "zoom-sms"
+main            = "worker.js"
+compatibility_date = "2024-09-23"
+
+# Secrets (do NOT put real values here — set via `wrangler secret put`)
+# ZOOM_ACCOUNT_ID
+# ZOOM_CLIENT_ID
+# ZOOM_CLIENT_SECRET
+
+# Route: catch /sms and /sms/* on your custom domain
+[[routes]]
+pattern  = "api.eno.solutions/sms*"
+zone_name = "eno.solutions"
