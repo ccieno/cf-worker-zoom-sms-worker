@@ -721,11 +721,21 @@ async function getWorkItemFlows(token) {
 
     for (const flow of data.flows ?? []) {
       if (flow.channel !== 'work_item') continue;
-      if (!Array.isArray(flow.entry_points)) continue;
-      for (const ep of flow.entry_points) {
-        if (!ep.entry_id) continue;
+      const eps = Array.isArray(flow.entry_points) ? flow.entry_points : [];
+      if (eps.length > 0) {
+        // Flow has explicit entry points — use them
+        for (const ep of eps) {
+          if (!ep.entry_id) continue;
+          flows.push({
+            entryId: ep.entry_id,
+            label:   flow.flow_name,
+            flowId:  flow.flow_id,
+          });
+        }
+      } else {
+        // Work-item/API flows often have no entry_points — fall back to flow_id as the entry ID
         flows.push({
-          entryId: ep.entry_id,
+          entryId: flow.flow_id,
           label:   flow.flow_name,
           flowId:  flow.flow_id,
         });
