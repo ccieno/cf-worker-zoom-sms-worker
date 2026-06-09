@@ -531,6 +531,9 @@ const EMAIL_HTML = `<!DOCTYPE html>
             opt.textContent = t.name;
             typeSelect.appendChild(opt);
           });
+          // Default to Order Confirmation
+          const preferred = Array.from(typeSelect.options).find(o => o.text === 'Order Confirmation');
+          if (preferred) typeSelect.value = preferred.value;
           typeSelect.disabled = false;
         }
       } catch (err) {
@@ -596,15 +599,20 @@ const EMAIL_HTML = `<!DOCTYPE html>
       }
     });
 
-    // ── Auto-incrementing Order ID ───────────────────────────────────────────
+    // ── Auto-incrementing Order ID + dependent field defaults ───────────────
     // Starts at ORD-050624, increments by 1 on each page load, persists in localStorage.
-    (function initOrderId() {
+    const currentOrderId = (function initOrderId() {
       const ORD_START = 50624;
       const KEY = 'orderCounter';
       let n = parseInt(localStorage.getItem(KEY) ?? ORD_START, 10);
       if (isNaN(n)) n = ORD_START;
-      document.getElementById('referenceId').value = 'ORD-' + String(n).padStart(6, '0');
+      const orderId = 'ORD-' + String(n).padStart(6, '0');
       localStorage.setItem(KEY, n + 1);
+      document.getElementById('referenceId').value   = orderId;
+      document.getElementById('workItemName').value  = 'New Order ' + orderId;
+      document.getElementById('workItemDesc').value  = 'New Order ' + orderId;
+      document.getElementById('messageBody').value   = 'Your order ' + orderId + ' has shipped, please await further updates';
+      return orderId;
     })();
 
     loadSelectors();
