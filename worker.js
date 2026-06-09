@@ -877,7 +877,7 @@ export default {
       }
     }
 
-    // ── Debug: raw flows from Zoom (remove after diagnosis) ───────────────
+    // ── Debug: raw flows + detail for work_item flows (remove after diagnosis) ─
     if (pathname === '/email/api/debug-flows' && method === 'GET') {
       try {
         const token = await getZoomToken(env);
@@ -887,16 +887,27 @@ export default {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
-        // Return just the fields we care about for diagnosis
-        const summary = (data.flows ?? []).map(f => ({
-          flow_id:       f.flow_id,
-          flow_name:     f.flow_name,
-          channel:       f.channel,
-          channel_source: f.channel_source,
-          status:        f.status,
-          entry_points:  f.entry_points,
-        }));
-        return jsonResponse(summary);
+
+        // For work_item flows, also fetch the detail endpoint to find entry IDs
+        const results = [];
+        for (const f of data.flows ?? []) {
+          const item = {
+            flow_id:        f.flow_id,
+            flow_name:      f.flow_name,
+            channel:        f.channel,
+            channel_source: f.channel_source,
+            status:         f.status,
+            entry_points:   f.entry_points,
+          };
+          if (f.channel === 'work_item') {
+            const detailRes = await fetch(`${ZOOM_API}/contact_center/flows/${f.flow_id}`, {
+              headers: { Authorization: `Bearer ${token}` },
+            });
+            item.detail = await detailRes.json();
+          }
+          results.push(item);
+        }
+        return jsonResponse(results);
       } catch (err) {
         return jsonResponse({ error: err.message }, 500);
       }
