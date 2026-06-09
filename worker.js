@@ -867,6 +867,31 @@ export default {
       }
     }
 
+    // ── Debug: raw flows from Zoom (remove after diagnosis) ───────────────
+    if (pathname === '/email/api/debug-flows' && method === 'GET') {
+      try {
+        const token = await getZoomToken(env);
+        const url = new URL(`${ZOOM_API}/contact_center/flows`);
+        url.searchParams.set('page_size', '100');
+        const res = await fetch(url.toString(), {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await res.json();
+        // Return just the fields we care about for diagnosis
+        const summary = (data.flows ?? []).map(f => ({
+          flow_id:       f.flow_id,
+          flow_name:     f.flow_name,
+          channel:       f.channel,
+          channel_source: f.channel_source,
+          status:        f.status,
+          entry_points:  f.entry_points,
+        }));
+        return jsonResponse(summary);
+      } catch (err) {
+        return jsonResponse({ error: err.message }, 500);
+      }
+    }
+
     // ── Email: list work-item types (from env var) ─────────────────────────
     if (pathname === '/email/api/work-item-types' && method === 'GET') {
       try {

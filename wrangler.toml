@@ -1,6 +1,7 @@
 name               = "zoom-sms"
 main               = "worker.js"
 compatibility_date = "2024-09-23"
+workers_dev        = false
 
 # ── Secrets (set via `wrangler secret put`, never store values here) ──────────
 # wrangler secret put ZOOM_ACCOUNT_ID
@@ -15,7 +16,10 @@ WORK_ITEM_TYPES = '[{"id":"X1iDdZYITZySqQWTB4IKjg","name":"Work item"},{"id":"yW
 
 # ── Routes (inline array — avoids Wrangler 4.x multi-block issues) ────────────
 # Specific paths only — does NOT touch api.eno.solutions/zoom/ or anything else.
-routes = [
-  { pattern = "api.eno.solutions/sms*",   zone_name = "eno.solutions" },
-  { pattern = "api.eno.solutions/email*", zone_name = "eno.solutions" }
-]
+[[routes]]
+pattern = "api.eno.solutions/sms*"
+zone_id = "9bbf547f8e3443ec64e9f41b1f998095"
+
+[[routes]]
+pattern = "api.eno.solutions/email*"
+zone_id = "9bbf547f8e3443ec64e9f41b1f998095"
