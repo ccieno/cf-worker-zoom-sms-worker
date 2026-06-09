@@ -428,11 +428,11 @@ const EMAIL_HTML = `<!DOCTYPE html>
       <div class="form-row">
         <div class="form-group">
           <label for="consumerName">Full Name<span class="required">*</span></label>
-          <input type="text" id="consumerName" placeholder="Jane Smith" required />
+          <input type="text" id="consumerName" value="Joe Bloggs" required />
         </div>
         <div class="form-group">
           <label for="consumerEmail">Email Address<span class="required">*</span></label>
-          <input type="email" id="consumerEmail" placeholder="jane@example.com" required />
+          <input type="email" id="consumerEmail" value="joe@eno.solutions" required />
         </div>
       </div>
       <div class="form-group">
@@ -585,7 +585,6 @@ const EMAIL_HTML = `<!DOCTYPE html>
             (data.engagement_id ? '<div class="msg-id">Engagement ID: ' + data.engagement_id + '</div>' : '') +
             (data.session_id    ? '<div class="msg-id">Session ID: '    + data.session_id    + '</div>' : '')
           );
-          form.querySelectorAll('input[type="text"], input[type="email"], textarea').forEach(el => el.value = '');
         } else {
           const errMsg = data?.error?.message || (typeof data?.error === 'string' ? data.error : null) || JSON.stringify(data.error || data);
           showStatus('error', '&#10007;&nbsp; ' + errMsg);
@@ -596,6 +595,17 @@ const EMAIL_HTML = `<!DOCTYPE html>
         sendBtn.disabled = false;
       }
     });
+
+    // ── Auto-incrementing Order ID ───────────────────────────────────────────
+    // Starts at ORD-050624, increments by 1 on each page load, persists in localStorage.
+    (function initOrderId() {
+      const ORD_START = 50624;
+      const KEY = 'orderCounter';
+      let n = parseInt(localStorage.getItem(KEY) ?? ORD_START, 10);
+      if (isNaN(n)) n = ORD_START;
+      document.getElementById('referenceId').value = 'ORD-' + String(n).padStart(6, '0');
+      localStorage.setItem(KEY, n + 1);
+    })();
 
     loadSelectors();
   </script>
