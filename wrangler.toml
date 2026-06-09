@@ -14,6 +14,11 @@ workers_dev        = false
 # Replace each REPLACE_ID_* with the real ID, and update the names to match.
 WORK_ITEM_TYPES = '[{"id":"X1iDdZYITZySqQWTB4IKjg","name":"Work item"},{"id":"yWsvUl9CRemw1rCEWBkndg","name":"Order Confirmation"},{"id":"KSuqmSasSlC9uSSlgj2K-A","name":"Service Issue"},{"id":"owpze-6pSqm2ntQGAoRPBQ","name":"Delivery Update"}]'
 
+# Work item flows — ZCC doesn't return Entry IDs via the flows API for work_item channel.
+# Get the Entry ID from ZCC Admin > Contact Center Management > Preferences > Entry ID.
+# Format: [{"entryId":"...","label":"Flow Name","flowId":"..."}]
+WORK_ITEM_FLOWS = '[{"entryId":"YXTDVVrETQ6OAfjnGld-0Q","label":"Email Sender","flowId":"Vt0kUZVpTGefXPTpURrrsQ"}]'
+
 # ── Routes (inline array — avoids Wrangler 4.x multi-block issues) ────────────
 # Specific paths only — does NOT touch api.eno.solutions/zoom/ or anything else.
 [[routes]]

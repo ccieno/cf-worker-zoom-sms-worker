@@ -866,10 +866,11 @@ export default {
     }
 
     // ── Email: list work-item flows ────────────────────────────────────────
+    // ZCC's flows API doesn't return Entry IDs for work_item channel flows,
+    // so we read from the WORK_ITEM_FLOWS env var configured in wrangler.toml.
     if (pathname === '/email/api/flows' && method === 'GET') {
       try {
-        const token = await getZoomToken(env);
-        const flows = await getWorkItemFlows(token);
+        const flows = JSON.parse(env.WORK_ITEM_FLOWS ?? '[]');
         return jsonResponse(flows);
       } catch (err) {
         console.error('email/flows error:', err);
