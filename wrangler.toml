@@ -1,13 +1,21 @@
-name            = "zoom-sms"
-main            = "worker.js"
+name               = "zoom-sms"
+main               = "worker.js"
 compatibility_date = "2024-09-23"
 
-# Secrets (do NOT put real values here — set via `wrangler secret put`)
-# ZOOM_ACCOUNT_ID
-# ZOOM_CLIENT_ID
-# ZOOM_CLIENT_SECRET
+# ── Secrets (set via `wrangler secret put`, never store values here) ──────────
+# wrangler secret put ZOOM_ACCOUNT_ID
+# wrangler secret put ZOOM_CLIENT_ID
+# wrangler secret put ZOOM_CLIENT_SECRET
 
-# Route: catch /sms and /sms/* on your custom domain
-[[routes]]
-pattern  = "api.eno.solutions/sms*"
-zone_name = "eno.solutions"
+# ── Vars (non-sensitive config — edit here and redeploy) ──────────────────────
+[vars]
+# Work item types — find the IDs in ZCC Admin > Preferences > Work Item Types.
+# Replace each REPLACE_ID_* with the real ID, and update the names to match.
+WORK_ITEM_TYPES = '[{"id":"X1iDdZYITZySqQWTB4IKjg","name":"Work item"},{"id":"yWsvUl9CRemw1rCEWBkndg","name":"Order Confirmation"},{"id":"KSuqmSasSlC9uSSlgj2K-A","name":"Service Issue"},{"id":"owpze-6pSqm2ntQGAoRPBQ","name":"Delivery Update"}]'
+
+# ── Routes (inline array — avoids Wrangler 4.x multi-block issues) ────────────
+# Specific paths only — does NOT touch api.eno.solutions/zoom/ or anything else.
+routes = [
+  { pattern = "api.eno.solutions/sms*",   zone_name = "eno.solutions" },
+  { pattern = "api.eno.solutions/email*", zone_name = "eno.solutions" }
+]
